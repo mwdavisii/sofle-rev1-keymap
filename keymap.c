@@ -120,3 +120,30 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][2] = {
     [2] = { ENCODER_CCW_CW(KC_TRNS, KC_TRNS), ENCODER_CCW_CW(KC_TRNS, KC_TRNS) },
     [3] = { ENCODER_CCW_CW(KC_TRNS, KC_TRNS), ENCODER_CCW_CW(KC_TRNS, KC_TRNS) },
 };
+
+#ifdef RGB_MATRIX_ENABLE
+// Per-layer LED tint. Runs every frame; overrides the base effect's color
+// on non-base layers so you get visual layer feedback without disabling
+// the animation you picked in Vial.
+//
+// Base layer  → let the Vial-chosen effect run (no override)
+// Lower (1)   → green
+// Upper (2)   → blue
+// Nav   (3)   → magenta
+bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
+    uint8_t layer = get_highest_layer(layer_state);
+    if (layer == 0) return false;
+
+    uint8_t r = 0, g = 0, b = 0;
+    switch (layer) {
+        case 1: r =   0; g = 180; b =   0; break;  // Lower — green
+        case 2: r =   0; g =  80; b = 200; break;  // Upper — blue
+        case 3: r = 180; g =   0; b = 180; break;  // Nav   — magenta
+        default: return false;
+    }
+    for (uint8_t i = led_min; i < led_max; i++) {
+        rgb_matrix_set_color(i, r, g, b);
+    }
+    return false;
+}
+#endif

@@ -15,6 +15,7 @@ KEY_OVERRIDE_ENABLE = no
 CAPS_WORD_ENABLE = no
 LAYER_LOCK_ENABLE = no
 REPEAT_KEY_ENABLE = no
+WPM_ENABLE = yes
 
 # RP2040 Pro Micro drop-in (Elite-Pi / Liatris / Helios class).
 # Bakes the converter in so plain `qmk compile -kb sofle/rev1 -km mwdavisii` works.
