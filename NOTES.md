@@ -54,11 +54,32 @@ fine — that's how we confirmed brownout was the root cause vs firmware bugs.
 in steps (80, 120, 150). Watch for the "fine for 30s, then haywire" symptom —
 that's the brownout returning.
 
-## Vial layout (.vil)
+## Vial layout (.vil) — CRITICAL
 
-The layout you edit in the Vial GUI lives in EEPROM. Save it to disk via
-**File → Save Current Layout** and commit `sofle.vil` here so you can restore
-after any EEPROM wipe with **File → Load Saved Layout**.
+The layout you edit in the Vial GUI lives ONLY in the keyboard's EEPROM until
+you export it. Losing EEPROM = losing all your Vial GUI work (tap dances,
+macros, keymap positions, encoder maps).
+
+**Save `sofle.vil` at the END of every Vial editing session.** Not once ever —
+every time you make changes worth keeping.
+
+1. Vial → **File → Save Current Layout**
+2. Overwrite `sofle.vil` in this folder
+3. `git add sofle.vil && git commit -m "..."`
+
+To restore: Vial → **File → Load Saved Layout** → pick `sofle.vil`.
+
+### When EEPROM gets wiped (more often than you'd think)
+
+- Holding top-left key on plug-in (bootmagic — intentional wipe)
+- **Any time `rules.mk` changes feature flags** (RGB_MATRIX_ENABLE, WPM_ENABLE,
+  layer count, etc.). QMK checks a hash of the EEPROM layout on boot; when the
+  feature set changes the hash changes and QMK wipes to avoid reading garbage
+  as keycodes. This is safety, not a bug.
+- Occasionally on QMK version upgrades if internal EEPROM schema changes.
+
+**Rule:** before ANY reflash where you touched `rules.mk`, `config.h`, or pulled
+new vial-qmk, save `sofle.vil` first. Every time.
 
 ## Upstream sync
 
