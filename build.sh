@@ -10,10 +10,25 @@
 
 set -euo pipefail
 
-# Resolve vial-qmk root regardless of where the script is called from.
-# Script lives at: <vial-qmk>/keyboards/sofle/rev1/keymaps/mwdavisii/build.sh
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-QMK_ROOT="$(cd "$SCRIPT_DIR/../../../../.." && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+
+# The keymap directory may be a symlink inside vial-qmk (e.g.
+# vial-qmk/keyboards/sofle/rev1/keymaps/mwdavisii -> sofle-rev1-keymap).
+# If the script's physical directory is already at the expected depth inside
+# qmk root, climb upward; otherwise look for vial-qmk as a sibling of the
+# script's parent directory.
+EXPECTED_KEYBOARD_DIR="$SCRIPT_DIR/../../../../keyboards/sofle/rev1"
+if [ -d "$EXPECTED_KEYBOARD_DIR" ]; then
+    QMK_ROOT="$(cd "$SCRIPT_DIR/../../../../.." && pwd -P)"
+else
+    PARENT="$(cd "$SCRIPT_DIR/.." && pwd -P)"
+    if [ -d "$PARENT/vial-qmk/keyboards/sofle/rev1" ]; then
+        QMK_ROOT="$PARENT/vial-qmk"
+    else
+        echo "Cannot locate vial-qmk root from $SCRIPT_DIR" >&2
+        exit 1
+    fi
+fi
 
 cd "$QMK_ROOT"
 
