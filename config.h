@@ -23,6 +23,15 @@
 // Vial Support
 #define VIAL_KEYBOARD_UID { 0x05, 0xCD, 0x9F, 0x8A, 0xF4, 0xDF, 0xDE, 0xB2 }
 
+// Encoder: one keypress per physical detent.
+// Sofle rev1 upstream defaults ENCODER_RESOLUTION to 2, which fires two events
+// per click on the EC11 encoders this board actually ships with. Override to 4
+// so one detent = one keypress on both knobs. NUM_ENCODERS_RIGHT is 1 on this
+// board, so ENCODER_RESOLUTIONS must be a single-element array; leave it to
+// fall back to ENCODER_RESOLUTION on both sides.
+#undef ENCODER_RESOLUTION
+#define ENCODER_RESOLUTION 4
+
 // The four corners
 #define VIAL_UNLOCK_COMBO_ROWS { 0, 5, 3, 8 }
 #define VIAL_UNLOCK_COMBO_COLS { 0, 0, 0, 0 }
